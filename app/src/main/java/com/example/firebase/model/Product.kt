@@ -1,6 +1,6 @@
-package com.example.firebase
+package com.example.firebase.model
 
-// Modelo de datos simple para Firestore
+// El modelo representa los datos de la base de datos
 data class Product(
     val id: String = "",
     val name: String = "",

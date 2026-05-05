@@ -1,7 +1,8 @@
-package com.example.firebase
+package com.example.firebase.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import com.example.firebase.model.Product
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 
@@ -9,14 +10,13 @@ class ProductViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
     private val productsCollection = db.collection("products")
 
-    // Estado para la lista de productos
+    // Estado observable para la UI
     val products = mutableStateListOf<Product>()
 
     init {
         getProducts()
     }
 
-    // Escucha cambios en tiempo real desde Firestore
     private fun getProducts() {
         productsCollection.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
@@ -31,13 +31,15 @@ class ProductViewModel : ViewModel() {
         }
     }
 
-    // Guarda un nuevo producto
     fun saveProduct(name: String, price: String, onComplete: () -> Unit) {
         val product = hashMapOf(
             "name" to name,
-            "price" to price,
+            "price" to price
         )
         productsCollection.add(product)
-            .addOnSuccessListener { onComplete() }
+            .addOnCompleteListener { 
+                // Esto se ejecuta SIEMPRE (éxito o error)
+                onComplete() 
+            }
     }
 }
